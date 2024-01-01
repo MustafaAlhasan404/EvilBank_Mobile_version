@@ -1,0 +1,64 @@
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "Nour",
+  "lastName": "Habra",
+  "address": "Sahnaya, Damascus, Syria",
+  "birthday": "2002-08-08",
+  "username": "nourhabra",
+  "password": "nourhabra"
+}
+
+###
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "Mustafa",
+  "lastName": "Al Hassny",
+  "address": "Mashrou Dummar, Damascus, Syria",
+  "birthday": "2002-06-10",
+  "username": "mustafa",
+  "password": "mustafa"
+}
+
+###
+
+POST http://localhost:3000/signup
+Content-Type: application/json
+
+{
+  "firstName": "Super",
+  "lastName": "Admin",
+  "address": "This System",
+  "birthday": "2001-01-01",
+  "username": "admin",
+  "password": "admin",
+  "balance": 10000000
+}
+
+###
+
+POST http://localhost:3000/transfer
+Content-Type: application/json
+
+{
+  "senderUsername": "nourhabra",
+  "receiverUsername": "mustafa",
+  "amount": 200
+}
+
+###
+GET http://localhost:3000/users/nourhabra
+###
+GET http://localhost:3000/users/mustafa
+###
+GET http://localhost:3000/transactions/latest/nourhabra
+###
+DELETE http://localhost:3000/transactions
+###
+DELETE http://localhost:3000/users
+###
+GET http://localhost:3000/users
