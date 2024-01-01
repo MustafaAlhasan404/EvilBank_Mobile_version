@@ -1,6 +1,6 @@
-// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 import 'transfer_operation_screen.dart';
-import 'stocks.dart'; // Import your StockScreen
+import 'stocks.dart';
+import 'profile.dart'; // Import your ProfilePage
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -94,6 +94,14 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   color: Colors.black,
                   fontSize: 16,
                 ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(),
+                    ),
+                  );
+                },
               ),
             ],
             selectedIndex: widget.selectedIndex,

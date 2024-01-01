@@ -1,5 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, prefer_const_declarations, use_build_context_synchronously, sort_child_properties_last, avoid_print, depend_on_referenced_packages, deprecated_member_use
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -298,7 +298,12 @@ class _LoginPageState extends State<LoginPage> {
 
       if (response.statusCode == 200) {
         // Successful login, save username
+
+// Save loggedInUser to SharedPreferences
         loggedInUser = username;
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('loggedInUser', loggedInUser!);
+
         Navigator.push(
           context,
           MaterialPageRoute(
