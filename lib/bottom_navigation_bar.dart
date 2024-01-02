@@ -1,8 +1,13 @@
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
+
+import 'package:evilbank_mobile/home.dart';
+
 import 'transfer_operation_screen.dart';
 import 'stocks.dart';
 import 'profile.dart'; // Import your ProfilePage
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   final int selectedIndex;
@@ -19,6 +24,21 @@ class CustomBottomNavBar extends StatefulWidget {
 }
 
 class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+  late String loggedInUser; // Change this to late
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLoggedInUser();
+  }
+
+  Future<void> _fetchLoggedInUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loggedInUser = prefs.getString('loggedInUser') ?? '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,6 +74,16 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   color: Colors.black,
                   fontSize: 16,
                 ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HomeScreen(
+                        username: loggedInUser,
+                      ),
+                    ),
+                  );
+                },
               ),
               GButton(
                 icon: Icons.arrow_circle_right,

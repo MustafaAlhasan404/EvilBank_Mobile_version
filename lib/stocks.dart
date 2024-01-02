@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'bottom_navigation_bar.dart'; // Import your CustomBottomNavBar
 import 'package:stock_market_data/stock_market_data.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,20 +41,17 @@ class _StockScreenState extends State<StockScreen> {
         padding: const EdgeInsets.all(20.0),
         color: const Color(0xFF171738),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 355,
+              height:
+                  MediaQuery.of(context).size.height * 0.55, // Adjusted height
               width: double.infinity,
-              child: BuyAndHoldResult(
-                exampleTicker: 'AAPL',
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 355,
-              width: double.infinity,
-              child: BuyAndHoldResult(
-                exampleTicker: 'VUSA.AS',
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: BuyAndHoldResult(
+                  exampleTicker: 'AAPL',
+                ),
               ),
             ),
           ],
@@ -103,11 +101,10 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
+    return Column(
       children: [
         const Text(
-          'Ticker from yahoo finance',
+          '',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -122,11 +119,16 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
         MaterialButton(
           onPressed: load,
           color: const Color(0xFF9067C6),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          minWidth: MediaQuery.of(context).size.width *
+              1, // Set width to half the screen width
           child: const Text(
             'Load',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 14, // Change the font size to make it smaller
             ),
           ),
         ),
@@ -171,10 +173,12 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
   }
 
   TextStyle _inputTextStyle() {
-    return const TextStyle(
-      color: Colors.black,
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
+    return GoogleFonts.sora(
+      textStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
