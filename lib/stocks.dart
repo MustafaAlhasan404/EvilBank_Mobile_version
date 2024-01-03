@@ -45,7 +45,7 @@ class _StockScreenState extends State<StockScreen> {
           children: [
             SizedBox(
               height:
-                  MediaQuery.of(context).size.height * 0.55, // Adjusted height
+                  MediaQuery.of(context).size.height * 0.6, // Adjusted height
               width: double.infinity,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -85,9 +85,21 @@ class BuyAndHoldResult extends StatefulWidget {
 }
 
 class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
-  final TextEditingController controller = TextEditingController(
-    text: '',
-  );
+  final List<String> indicatorOptions = [
+    'AAPL',
+    'SMA',
+    'EMA',
+    'RSI',
+    'BB',
+    'BOP',
+    'MFI',
+    'P',
+    'STDDEV',
+    'VWMA',
+    '%R',
+  ];
+
+  String selectedOption = 'AAPL'; // Default selected option
   BuyAndHoldStrategyResult backTest = BuyAndHoldStrategyResult();
   bool loading = true;
   String error = '';
@@ -95,7 +107,6 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
   @override
   void initState() {
     super.initState();
-    controller.text = widget.exampleTicker;
     load();
   }
 
@@ -111,10 +122,49 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        TextField(
-          controller: controller,
+        DropdownButton<String>(
+          value: selectedOption,
+          icon: const Icon(Icons.list, color: Colors.white),
+          iconSize: 24,
+          elevation: 16,
           style: _inputTextStyle(),
-          decoration: _inputDecoration('Ticker'),
+          underline: Container(), // Remove underlining
+          dropdownColor:
+              const Color(0xFF171738), // Set dropdown background color
+          itemHeight: 60, // Set a fixed height for the dropdown items
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              setState(() {
+                selectedOption = newValue;
+              });
+            }
+          },
+          items: indicatorOptions.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 15.0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF171738),
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black
+                          .withOpacity(0.2), // Set shadow color and opacity
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  value,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            );
+          }).toList(),
         ),
         MaterialButton(
           onPressed: load,
@@ -122,13 +172,12 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          minWidth: MediaQuery.of(context).size.width *
-              1, // Set width to half the screen width
+          minWidth: MediaQuery.of(context).size.width * 0.5,
           child: const Text(
             'Load',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 14, // Change the font size to make it smaller
+              fontSize: 14,
             ),
           ),
         ),
@@ -163,11 +212,11 @@ class _BuyAndHoldResultState extends State<BuyAndHoldResult> {
       setState(() {});
 
       backTest = await StockMarketDataService()
-          .getBackTestResultForSymbol(controller.text);
+          .getBackTestResultForSymbol(selectedOption);
       loading = false;
       setState(() {});
     } catch (e) {
-      error = 'Error getting the symbol ${controller.text}:\n $e';
+      error = 'Error getting the symbol $selectedOption:\n $e';
       setState(() {});
     }
   }
