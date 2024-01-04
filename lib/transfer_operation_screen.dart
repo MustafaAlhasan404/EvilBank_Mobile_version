@@ -1,5 +1,5 @@
 // ignore_for_file: sized_box_for_whitespace, deprecated_member_use, depend_on_referenced_packages, prefer_const_constructors, use_build_context_synchronously, use_key_in_widget_constructors, library_private_types_in_public_api, unused_local_variable, avoid_print
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'bottom_navigation_bar.dart';
 import 'home.dart';
@@ -26,26 +26,45 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF171738),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            // Show the transfer form when the button is clicked
-            showTransferForm();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xFFF7ECE1), // Button color
-            textStyle: TextStyle(
-              fontFamily: 'Google-Sora', // Font style
-              fontWeight: FontWeight.bold, // Make the font a little bolder
-              color: Color(0xFF8D86C9), // Text color
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(10.0), // Set the border radius
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 128, 16, 0),
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Show the transfer form when the button is clicked
+                  showTransferForm();
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF9067C6),
+                  onPrimary: Color(0xFF171738),
+                  textStyle: TextStyle(
+                    fontFamily: 'Google-Sora',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24.0, // Adjust the font size as needed
+                  ),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 64.0, horizontal: 128.0),
+                ),
+                child: Text(
+                  'Transfer',
+                  style: GoogleFonts.ubuntuMono(
+                    fontSize: 22.0, // Adjust the font size as needed
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ),
-          child: Text('Transfer'),
-        ),
+          // Add other widgets as needed below the button
+          // ...
+        ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: _selectedIndex,
@@ -53,7 +72,6 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
           setState(() {
             _selectedIndex = index;
             if (_selectedIndex == 0) {
-              // If "Home" is pressed, go back to HomeScreen using builder context
               Navigator.push(
                 context,
                 MaterialPageRoute(
