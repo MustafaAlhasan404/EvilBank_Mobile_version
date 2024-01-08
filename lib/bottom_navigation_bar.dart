@@ -3,7 +3,7 @@
 import 'package:evilbank_mobile/home.dart';
 
 import 'transfer_operation_screen.dart';
-import 'stocks.dart';
+// import 'stocks.dart';
 import 'profile.dart'; // Import your ProfilePage
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
