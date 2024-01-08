@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
 import 'package:evilbank_mobile/home.dart';
+import 'package:evilbank_mobile/transactions.dart';
 
 import 'transfer_operation_screen.dart';
 // import 'stocks.dart';
@@ -102,8 +103,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 },
               ),
               GButton(
-                icon: Icons.show_chart,
-                text: 'Stocks',
+                icon: Icons.history,
+                text: 'Transactions',
                 textStyle: TextStyle(
                   color: Colors.black,
                   fontSize: 16,
@@ -112,8 +113,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfilePage(),
-                      // builder: (context) => StockScreen(),
+                      builder: (context) => TransactionsScreen(),
                     ),
                   );
                 },
