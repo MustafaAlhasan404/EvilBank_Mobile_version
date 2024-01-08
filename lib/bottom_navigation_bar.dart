@@ -112,7 +112,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => StockScreen(),
+                      builder: (context) => ProfilePage(),
+                      // builder: (context) => StockScreen(),
                     ),
                   );
                 },

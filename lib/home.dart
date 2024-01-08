@@ -1,9 +1,12 @@
 // ignore_for_file: unused_field, library_private_types_in_public_api, avoid_print, prefer_const_constructors, use_key_in_widget_constructors
 
+import 'package:google_fonts/google_fonts.dart';
+
 import 'login.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_card/awesome_card.dart';
 import 'bottom_navigation_bar.dart';
+import 'Widgets/transaction_card.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -20,12 +23,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double userBalance = 0.0;
+  String userBalance = '';
   int _selectedIndex = 0;
   String cardNumber = '';
   String cardHolderName = loggedInUser!;
   String expiryDate = '';
   String cvv = '';
+  List<Transaction> transactions = [];
 
   late FocusNode _cvvFocusNode;
   bool _showBackSide = false;
@@ -36,28 +40,30 @@ class _HomeScreenState extends State<HomeScreen> {
     _cvvFocusNode = FocusNode();
 
     fetchCreditCardInfo();
-    fetchUserBalance();
+    fetchTransactions();
   }
 
-  Future<void> fetchUserBalance() async {
-    final String url = 'http://10.0.2.2:3000/getUserBalance/${widget.username}';
+  Future<void> fetchTransactions() async {
+    final String url =
+        'http://10.0.2.2:3000/transactions/latest/${loggedInUser}';
 
     try {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> userData = jsonDecode(response.body);
-        print('Fetched user balance: $userData');
+        final List<dynamic> transactionData = jsonDecode(response.body);
+
         setState(() {
-          userBalance = (userData['balance'] as num).toDouble();
+          transactions = transactionData
+              .map((data) => Transaction.fromJson(data))
+              .toList();
         });
-        print('Updated user balance in state: $userBalance');
       } else {
         print(
-            'Failed to fetch user balance. Status code: ${response.statusCode}');
+            'Failed to fetch transactions. Status code: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error fetching user balance: $error');
+      print('Error fetching transactions: $error');
     }
   }
 
@@ -74,6 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
           cardNumber = creditCardInfo['cardNumber'];
           cvv = creditCardInfo['cvv'];
           expiryDate = creditCardInfo['expiryDate'];
+          cardHolderName = creditCardInfo['name'];
+          userBalance = creditCardInfo['balance'];
         });
       } else {
         print(
@@ -98,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(top: 80),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
@@ -120,36 +128,40 @@ class _HomeScreenState extends State<HomeScreen> {
                     showShadow: true,
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Card(
-                    color: Color(0xFF171738),
+                    elevation: 0,
+                    color: Color.fromARGB(0, 0, 0, 0),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(0.0),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Balance: ',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'GoogleSans',
-                              color: Colors.white,
+                            'Total Balance:',
+                            style: GoogleFonts.sora(
+                              textStyle: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GoogleSans',
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           Text(
-                            '$userBalance',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                            userBalance,
+                            style: GoogleFonts.aboreto(
+                              textStyle: TextStyle(
+                                fontSize: 42,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'GoogleSans',
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ],
@@ -157,7 +169,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                Divider(
+                  // Add a solid line separator
+                  thickness: 1.0,
+                  color: Colors.white,
+                  indent: 128.0,
+                  endIndent: 128.0,
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Latest Transactions',
+                      style: GoogleFonts.sora(
+                        textStyle: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                ListView.builder(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: transactions.length,
+                  itemBuilder: (context, index) {
+                    final transaction = transactions[index];
+
+                    return CustomCard(
+                      title: transaction.title,
+                      name: transaction.name,
+                      amount: transaction.amount,
+                      date: transaction.date,
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
               ],
+              // More code here
             ),
           ),
         ),
@@ -170,6 +226,29 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
+    );
+  }
+}
+
+class Transaction {
+  final String title;
+  final String name;
+  final String date;
+  final String amount;
+
+  Transaction({
+    required this.title,
+    required this.name,
+    required this.date,
+    required this.amount,
+  });
+
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      title: json['title'],
+      name: json['name'],
+      date: json['date'],
+      amount: json['amount'],
     );
   }
 }

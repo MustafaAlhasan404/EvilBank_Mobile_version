@@ -25,8 +25,15 @@ mongoose.connect(
 // Signup endpoint
 app.post("/signup", async (req, res) => {
 	try {
-		const { firstName, lastName, address, birthday, username, password } =
-			req.body;
+		const {
+			firstName,
+			lastName,
+			address,
+			birthday,
+			username,
+			password,
+			balance,
+		} = req.body;
 
 		// Check if the username already exists
 		const existingUser = await User.findOne({ username });
@@ -42,6 +49,7 @@ app.post("/signup", async (req, res) => {
 			birthday,
 			username,
 			password,
+			balance,
 		});
 
 		// Save the user to the database
@@ -166,13 +174,15 @@ app.get("/getCreditCardInfo/:username", async (req, res) => {
 
 		const formattedName = user.firstName + " " + user.lastName;
 
+		const formattedBalance = user.balance.toLocaleString();
+
 		// Extract and send credit card information in the response
 		const creditCardInfo = {
 			cvv: user.cvv,
 			expiryDate: formattedExpiry,
 			name: formattedName,
 			cardNumber: formattedCardNumber,
-			balance: user.balance,
+			balance: formattedBalance,
 		};
 
 		res.status(200).json(creditCardInfo);
@@ -252,9 +262,33 @@ app.get("/transactions/:username", async (req, res) => {
 		// Find all transactions where the sender or receiver username matches
 		const transactions = await Transaction.find({
 			$or: [{ senderUsername: username }, { receiverUsername: username }],
-		});
+		}).sort({ date: -1 });
 
-		res.json(transactions);
+		const formattedTransactions = [];
+
+		transactions.forEach((t) => {
+			if (t.senderUsername == username) {
+				formattedTransactions.push({
+					title: "Outgoing",
+					name: t.receiverName,
+					amount: t.amount.toLocaleString(),
+					date: `${t.date.getFullYear()}/${
+						t.date.getMonth() + 1
+					}/${t.date.getDay()}`,
+				});
+			} else {
+				formattedTransactions.push({
+					title: "Incoming",
+					name: t.senderName,
+					amount: t.amount.toLocaleString(),
+					date: `${t.date.getFullYear()}/${
+						t.date.getMonth() + 1
+					}/${t.date.getDay()}`,
+				});
+			}
+		});
+		console.log(formattedTransactions);
+		res.status(200).json(formattedTransactions);
 	} catch (err) {
 		res.status(500).json({
 			error: "An error occurred while retrieving transactions",
@@ -278,7 +312,31 @@ app.get("/transactions/latest/:username", async (req, res) => {
 			.sort({ date: -1 })
 			.limit(5);
 
-		res.json(transactions);
+		const formattedTransactions = [];
+
+		transactions.forEach((t) => {
+			if (t.senderUsername == username) {
+				formattedTransactions.push({
+					title: "Outgoing",
+					name: t.receiverName,
+					amount: t.amount.toLocaleString(),
+					date: `${t.date.getFullYear()}/${
+						t.date.getMonth() + 1
+					}/${t.date.getDay()}`,
+				});
+			} else {
+				formattedTransactions.push({
+					title: "Incoming",
+					name: t.senderName,
+					amount: t.amount.toLocaleString(),
+					date: `${t.date.getFullYear()}/${
+						t.date.getMonth() + 1
+					}/${t.date.getDay()}`,
+				});
+			}
+		});
+		console.log(formattedTransactions);
+		res.status(200).json(formattedTransactions);
 	} catch (err) {
 		res.status(500).json({
 			error: "An error occurred while retrieving transactions",
