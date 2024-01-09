@@ -123,7 +123,19 @@ app.get("/users/:username", async (req, res) => {
 		if (!user) {
 			return res.status(404).send("User not found");
 		}
-		res.send(user);
+
+		const formattedUser = {
+			_id: user._id,
+			firstName: user.lastName,
+			lastName: user.lastName,
+			address: user.address,
+			birthday: user.birthday.toLocaleDateString(),
+			username: user.username,
+			password: user.password,
+			__v: user.__v,
+		};
+
+		res.send(formattedUser);
 	} catch (error) {
 		console.error(error);
 		res.status(500).send("Server error");
@@ -287,7 +299,6 @@ app.get("/transactions/:username", async (req, res) => {
 				});
 			}
 		});
-		console.log(formattedTransactions);
 		res.status(200).json(formattedTransactions);
 	} catch (err) {
 		res.status(500).json({
