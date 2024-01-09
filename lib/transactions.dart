@@ -17,7 +17,7 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  int _selectedIndex = 6;
+  int _selectedIndex = 2;
   List<Transaction> transactions = [];
 
   @override
