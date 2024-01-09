@@ -119,6 +119,22 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 },
               ),
               GButton(
+                icon: Icons.add_reaction,
+                text: 'Profile',
+                textStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(),
+                    ),
+                  );
+                },
+              ),
+              GButton(
                 icon: Icons.person,
                 text: 'Profile',
                 textStyle: TextStyle(

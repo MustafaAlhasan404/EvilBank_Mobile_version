@@ -43,13 +43,11 @@ class _ProfilePageState extends State<ProfilePage> {
         await http.get(Uri.parse('http://10.0.2.2:3000/users/$username'));
 
     if (response.statusCode == 200) {
-      // Parse and store the user data
       final Map<String, dynamic> data = json.decode(response.body);
       setState(() {
         userData = data;
       });
     } else {
-      // Handle error
       print('Failed to fetch user data. Status code: ${response.statusCode}');
     }
   }
@@ -71,8 +69,16 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: [
-                  _buildHeaderText(loggedInUser),
+                children: const [
+                  // _buildHeaderText(loggedInUser),
+                  Text(
+                    'Your Profile',
+                    style: TextStyle(
+                      color: Color(0xFF9067C6),
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   SizedBox(height: 24),
                   Padding(padding: EdgeInsets.all(35)),
                 ],
@@ -81,22 +87,21 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 18),
-                  Text(
-                    'My Personal Info',
-                    style: TextStyle(
-                      color: Color(0xFF9067C6),
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  // Text(
+                  //   'My Personal Info',
+                  //   style: TextStyle(
+                  //     color: Color(0xFF9067C6),
+                  //     fontSize: 24,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
                   SizedBox(height: 18),
-                  _buildDataButton('First Name', userData['firstName']),
+                  _buildDataField("Name",
+                      userData['firstName'] + " " + userData['lastName']),
                   SizedBox(height: 18),
-                  _buildDataButton('Last Name', userData['lastName']),
+                  _buildDataField('BirthDate', userData['birthday']),
                   SizedBox(height: 18),
-                  _buildDataButton('BirthDate', userData['birthday']),
-                  SizedBox(height: 18),
-                  _buildDataButton('Address', userData['address']),
+                  _buildDataField('Address', userData['address']),
                   SizedBox(height: 18),
                   Text(
                     'My Bank Info',
@@ -151,6 +156,31 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDataField(String label, String data) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Color(0xFF9067C6),
+            fontSize: 16,
+            // fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          data,
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
