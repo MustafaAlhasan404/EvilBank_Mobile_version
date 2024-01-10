@@ -1,5 +1,6 @@
 // profile.dart
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print
+import 'package:evilbank_mobile/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -142,14 +143,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                       SizedBox(
-                        height: 120,
-                      ),
-                      Container(
                         height: 50.0,
                         width: double.infinity,
                         child: TextButton(
                           onPressed: () {
-                            // Add your logout logic here
+                            // logout logic
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
                           },
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all<
@@ -213,23 +217,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ],
-    );
-  }
-}
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.soraTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: ProfilePage(),
     );
   }
 }
