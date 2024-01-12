@@ -23,7 +23,6 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   void initState() {
     super.initState();
-
     fetchTransactions();
   }
 

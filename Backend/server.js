@@ -126,12 +126,38 @@ app.get("/users/:username", async (req, res) => {
 
 		const formattedUser = {
 			_id: user._id,
-			firstName: user.lastName,
+			firstName: user.firstName,
 			lastName: user.lastName,
 			address: user.address,
 			birthday: user.birthday.toLocaleDateString(),
 			username: user.username,
 			password: user.password,
+			creditCardNumber: user.creditCardNumber,
+			__v: user.__v,
+		};
+
+		res.send(formattedUser);
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Server error");
+	}
+});
+
+app.get("/cardholders/:cardNumber", async (req, res) => {
+	const { cardNumber } = req.params;
+	try {
+		const user = await User.findOne({ creditCardNumber: cardNumber });
+		if (!user) {
+			return res.status(404).send({ msg: "Cardholder not found" });
+		}
+
+		const formattedUser = {
+			_id: user._id,
+			name: user.firstName + " " + user.lastName,
+			address: user.address,
+			birthday: user.birthday.toLocaleDateString(),
+			username: user.username,
+			creditCardNumber: user.creditCardNumber,
 			__v: user.__v,
 		};
 

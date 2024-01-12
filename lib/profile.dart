@@ -17,8 +17,6 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 3;
   late String loggedInUser = '';
   Map<String, dynamic> userData = {};
-  Set<String> selectedUserData =
-      {}; // Use a Set to keep track of selected buttons
 
   @override
   void initState() {
@@ -100,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildDataField('Address', userData['address']),
                   SizedBox(height: 52),
                   Text(
-                    'Login Crdentials',
+                    'Login Credentials',
                     style: TextStyle(
                       color: Color(0xFF9067C6),
                       fontSize: 24,
@@ -143,17 +141,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                       SizedBox(
+                        height: 32.0,
+                      ),
+                      SizedBox(
                         height: 50.0,
                         width: double.infinity,
                         child: TextButton(
                           onPressed: () {
-                            // logout logic
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(),
-                              ),
-                            );
+                            _logout();
                           },
                           style: ButtonStyle(
                             shape: MaterialStateProperty.all<
@@ -217,6 +212,18 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ],
+    );
+  }
+
+  void _logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('loggedInUser');
+
+    // Navigate to the login page
+    // ignore: use_build_context_synchronously
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
 }

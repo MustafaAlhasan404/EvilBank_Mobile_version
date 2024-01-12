@@ -76,7 +76,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   fontSize: 16,
                 ),
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => HomeScreen(

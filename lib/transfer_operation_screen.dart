@@ -1,11 +1,9 @@
-// ignore_for_file: sized_box_for_whitespace, deprecated_member_use, depend_on_referenced_packages, prefer_const_constructors, use_build_context_synchronously, use_key_in_widget_constructors, library_private_types_in_public_api, unused_local_variable, avoid_print
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'bottom_navigation_bar.dart';
-import 'home.dart';
-import 'login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:evilbank_mobile/home.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'bottom_navigation_bar.dart';
 
 class TransferOperationScreen extends StatefulWidget {
   @override
@@ -15,12 +13,38 @@ class TransferOperationScreen extends StatefulWidget {
 
 class _TransferOperationScreenState extends State<TransferOperationScreen> {
   int _selectedIndex = 1; // Index for the "Transfer" tab
+  TextEditingController _cardNumberController = TextEditingController();
+  String recipientName = '';
+  String recipientAddress = '';
+  String recipientCardNumber = '';
+  String errorMessage = '';
+  late String loggedInUser = '';
 
-  // Controller for the recipient credit card number input
-  final recipientCardNumberController = TextEditingController();
+  Future<void> _getRecipientDetails() async {
+    final response = await http.get(Uri.parse(
+        'http://10.0.2.2:3000/cardholders/${_cardNumberController.text}'));
 
-  // Controller for the amount to be transferred input
-  final amountController = TextEditingController();
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        recipientName = data['name'];
+        recipientAddress = data['creditCardNumber'];
+        recipientAddress = data['address'];
+        errorMessage = '';
+      });
+    } else if (response.statusCode == 404) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        errorMessage = data["msg"];
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _cardNumberController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,42 +52,119 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
       backgroundColor: const Color(0xFF171738),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(16, 128, 16, 0),
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  // Show the transfer form when the button is clicked
-                  showTransferForm();
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Color(0xFF9067C6),
-                  onPrimary: Color(0xFF171738),
-                  textStyle: TextStyle(
-                    fontFamily: 'Google-Sora',
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24.0, // Adjust the font size as needed
+            padding: const EdgeInsets.fromLTRB(16, 92, 16, 0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Transfer',
+                    style: GoogleFonts.sora(
+                      textStyle: const TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
+                  SizedBox(
+                    height: 16.0,
                   ),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 64.0, horizontal: 128.0),
-                ),
-                child: Text(
-                  'Transfer',
-                  style: GoogleFonts.ubuntuMono(
-                    fontSize: 22.0, // Adjust the font size as needed
-                    fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInputField(
+                            'Recipient Card Number', _cardNumberController),
+                      ),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: _getRecipientDetails,
+                        color: Colors.white,
+                        style: ButtonStyle(
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              side: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.transparent),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                ]),
+          ),
+          if (errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 16.0,
+                  ),
+                  Text(
+                    errorMessage,
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          // Add other widgets as needed below the button
-          // ...
+          if (!errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 32.0),
+              // padding: EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Recipient Info
+                  _buildDataField("Name", recipientName),
+                  const SizedBox(height: 18),
+                  _buildDataField("Address", recipientAddress),
+                  const SizedBox(height: 18),
+                  _buildDataField("Card Number", recipientCardNumber),
+                  SizedBox(
+                    height: 50.0,
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: () {
+                        // _logout();
+                      },
+                      style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            side: const BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.transparent),
+                      ),
+                      child: Text(
+                        'Confirm',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
@@ -72,7 +173,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
           setState(() {
             _selectedIndex = index;
             if (_selectedIndex == 0) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomeScreen(
@@ -87,134 +188,72 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
     );
   }
 
-  // Function to show the transfer form as a dropdown
-  void showTransferForm() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor:
-              Color(0xFFF7ECE1), // Set the background color of the AlertDialog
-          title: Text(
-            'Transfer Form',
-            style: TextStyle(
-              fontFamily: 'Google-Sora', // Font style
-              fontWeight: FontWeight.bold, // Make the font a little bolder
-              color: Color(0xFF8D86C9), // Text color
-            ),
+  Widget _buildDataField(String label, String data) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Color(0xFF9067C6),
+            fontSize: 16,
+            // fontWeight: FontWeight.bold,
           ),
-          content: Container(
-            width: MediaQuery.of(context).size.width *
-                0.8, // Set the width of the dialog content
-            height: MediaQuery.of(context).size.height *
-                0.4, // Set the height of the dialog content
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextFormField(
-                  controller: recipientCardNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Recipient Credit Card Number',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Google-Sora', // Font style
-                      fontWeight:
-                          FontWeight.bold, // Make the font a little bolder
-                      color: Color(0xFF8D86C9), // Text color
-                    ),
-                  ),
-                ),
-                TextFormField(
-                  controller: amountController,
-                  decoration: InputDecoration(
-                    labelText: 'Amount to be Transferred',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Google-Sora', // Font style
-                      fontWeight:
-                          FontWeight.bold, // Make the font a little bolder
-                      color: Color(0xFF8D86C9), // Text color
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        ),
+        Text(
+          data,
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 255, 255),
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
-          actions: [
-            ElevatedButton(
-              onPressed: () async {
-                // Call the server to handle the money transfer
-                await transferMoney();
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xFFF7ECE1), // Button color
-                textStyle: TextStyle(
-                  fontFamily: 'Google-Sora', // Font style
-                  fontWeight: FontWeight.bold, // Make the font a little bolder
-                  color: Color(0xFF8D86C9), // Text color
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10.0), // Set the border radius
-                ),
-              ),
-              child: Text('Transfer'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Close the dialog without performing the transfer
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                  fontFamily: 'Google-Sora', // Font style
-                  fontWeight: FontWeight.bold, // Make the font a little bolder
-                  color: Color(0xFF8D86C9), // Text color
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+        ),
+      ],
     );
   }
 
-  // Function to handle the money transfer
-  Future<void> transferMoney() async {
-    try {
-      // Extract values from controllers
-      String recipientCardNumber = recipientCardNumberController.text;
-      String amount = amountController.text;
-
-      // Send a transfer request to the server
-      final response = await http.post(
-        Uri.parse(
-            'http://10.0.2.2:3000/transferMoney'), // Update with your server URL
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'senderUsername': loggedInUser,
-          'recipientCardNumber':
-              recipientCardNumber, // Update key to match server expectations
-          'amount': amount,
-        }),
-      );
-
-      // Handle the response from the server
-      if (response.statusCode == 200) {
-        // Transfer successful
-        print('Money transfer successful');
-      } else {
-        // Transfer failed, handle the error
-        print('Money transfer failed: ${response.body}');
-        // Add a Flutter toast or dialog to inform the user about the failure
-      }
-    } catch (error) {
-      // Handle exceptions or errors during the transfer process
-      print('Error during money transfer: $error');
-      // Add a Flutter toast or dialog to inform the user about the error
-    }
+  Widget _buildInputField(String label, TextEditingController controller) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFFF7ECE1),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: TextFormField(
+        controller: controller,
+        style: GoogleFonts.sora(
+          textStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: GoogleFonts.sora(
+            textStyle: const TextStyle(
+              color: Color(0xFF8D86C9),
+              fontSize: 18,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Color(0xFFF7ECE1),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Color(0xFFF7ECE1),
+            ),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          // suffixIcon: suffixIcon,
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          fillColor: Color(0xFFF7ECE1),
+          filled: true,
+        ),
+      ),
+    );
   }
 }

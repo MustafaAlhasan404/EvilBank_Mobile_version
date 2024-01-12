@@ -62,3 +62,5 @@ DELETE http://localhost:3000/transactions
 DELETE http://localhost:3000/users
 ###
 GET http://localhost:3000/users
+###
+GET http://localhost:3000/cardholders/4545750756710307
