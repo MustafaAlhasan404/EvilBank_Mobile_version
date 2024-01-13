@@ -28,8 +28,8 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
       final data = jsonDecode(response.body);
       setState(() {
         recipientName = data['name'];
-        recipientAddress = data['creditCardNumber'];
         recipientAddress = data['address'];
+        recipientCardNumber = data['creditCardNumber'];
         errorMessage = '';
       });
     } else if (response.statusCode == 404) {
@@ -69,7 +69,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16.0,
                   ),
                   Row(
@@ -78,7 +78,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                         child: _buildInputField(
                             'Recipient Card Number', _cardNumberController),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8.0,
                       ),
                       IconButton(
@@ -95,6 +95,8 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                           ),
                           backgroundColor: MaterialStateProperty.all<Color>(
                               Colors.transparent),
+                          padding:
+                              MaterialStateProperty.all(EdgeInsets.all(20.0)),
                         ),
                       ),
                     ],
@@ -104,25 +106,39 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
           if (errorMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.all(32.0),
-              child: Column(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 16.0,
-                  ),
-                  Text(
-                    errorMessage,
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      const SizedBox(
+                        height: 128.0,
+                      ),
+                      // Icon goes here
+                      const Icon(
+                        Icons.person_off_rounded,
+                        color: Colors.white,
+                        size: 150.0,
+                      ),
+                      Text(
+                        errorMessage,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          if (!errorMessage.isNotEmpty)
+          if (recipientName.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 32.0),
               // padding: EdgeInsets.symmetric(vertical: 8),
@@ -136,6 +152,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                   _buildDataField("Address", recipientAddress),
                   const SizedBox(height: 18),
                   _buildDataField("Card Number", recipientCardNumber),
+                  const SizedBox(height: 50),
                   SizedBox(
                     height: 50.0,
                     width: double.infinity,
@@ -154,7 +171,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                         backgroundColor: MaterialStateProperty.all<Color>(
                             Colors.transparent),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Confirm',
                         style: TextStyle(
                           color: Colors.white,

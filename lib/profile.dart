@@ -21,6 +21,11 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    userData['name'] = '';
+    userData['hiddenPassword'] = '';
+    userData['birthday'] = '';
+    userData['address'] = '';
+    userData['username'] = '';
     _loadLoggedInUser();
   }
 

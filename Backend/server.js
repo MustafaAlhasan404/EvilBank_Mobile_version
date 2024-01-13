@@ -6,6 +6,7 @@ const cors = require("cors");
 const readline = require("readline");
 const User = require("./User");
 const Transaction = require("./Transaction");
+const formatCreditCardNumber = require("./utils");
 
 const app = express();
 const port = 3000;
@@ -144,6 +145,7 @@ app.get("/users/:username", async (req, res) => {
 });
 
 app.get("/cardholders/:cardNumber", async (req, res) => {
+	console.log("GET: Cardholders");
 	const { cardNumber } = req.params;
 	try {
 		const user = await User.findOne({ creditCardNumber: cardNumber });
@@ -157,7 +159,7 @@ app.get("/cardholders/:cardNumber", async (req, res) => {
 			address: user.address,
 			birthday: user.birthday.toLocaleDateString(),
 			username: user.username,
-			creditCardNumber: user.creditCardNumber,
+			creditCardNumber: formatCreditCardNumber(user.creditCardNumber),
 			__v: user.__v,
 		};
 
@@ -372,7 +374,6 @@ app.get("/transactions/latest/:username", async (req, res) => {
 				});
 			}
 		});
-		console.log(formattedTransactions);
 		res.status(200).json(formattedTransactions);
 	} catch (err) {
 		res.status(500).json({
