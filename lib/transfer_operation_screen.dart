@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:evilbank_mobile/home.dart';
@@ -245,6 +246,10 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        keyboardType: TextInputType.number,
+        inputFormatters: <TextInputFormatter>[
+          FilteringTextInputFormatter.digitsOnly
+        ],
         decoration: InputDecoration(
           labelText: label,
           labelStyle: GoogleFonts.sora(
