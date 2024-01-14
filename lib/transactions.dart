@@ -73,7 +73,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   height: 8.0,
                 ),
                 Row(
@@ -82,7 +82,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                     Text(
                       'All Transactions',
                       style: GoogleFonts.sora(
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 24,
                           color: Colors.white,
                         ),

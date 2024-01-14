@@ -1,3 +1,4 @@
+import 'package:evilbank_mobile/amount.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -7,17 +8,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'bottom_navigation_bar.dart';
 
 class TransferOperationScreen extends StatefulWidget {
+  const TransferOperationScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _TransferOperationScreenState createState() =>
       _TransferOperationScreenState();
 }
 
 class _TransferOperationScreenState extends State<TransferOperationScreen> {
-  int _selectedIndex = 1; // Index for the "Transfer" tab
-  TextEditingController _cardNumberController = TextEditingController();
-  String recipientName = '';
+  int _selectedIndex = 1;
+  final TextEditingController _cardNumberController = TextEditingController();
   String recipientAddress = '';
+  String recipientName = '';
   String recipientCardNumber = '';
+  String recipientUsername = '';
   String errorMessage = '';
   late String loggedInUser = '';
 
@@ -31,6 +36,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
         recipientName = data['name'];
         recipientAddress = data['address'];
         recipientCardNumber = data['creditCardNumber'];
+        recipientUsername = data['username'];
         errorMessage = '';
       });
     } else if (response.statusCode == 404) {
@@ -57,52 +63,57 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 92, 16, 0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Transfer',
-                    style: GoogleFonts.sora(
-                      textStyle: const TextStyle(
-                        fontSize: 24,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 16.0,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInputField(
-                            'Recipient Card Number', _cardNumberController),
-                      ),
-                      const SizedBox(
-                        width: 8.0,
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.search),
-                        onPressed: _getRecipientDetails,
-                        color: Colors.white,
-                        style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              side: const BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.transparent),
-                          padding:
-                              MaterialStateProperty.all(EdgeInsets.all(20.0)),
+            child: FocusScope(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Transfer',
+                      style: GoogleFonts.sora(
+                        textStyle: const TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
                         ),
                       ),
-                    ],
-                  ),
-                ]),
+                    ),
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInputField(
+                              'Recipient Card Number', _cardNumberController),
+                        ),
+                        const SizedBox(
+                          width: 8.0,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: () {
+                            FocusScope.of(context).unfocus();
+                            _getRecipientDetails();
+                          },
+                          color: Colors.white,
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                side: const BorderSide(color: Colors.white),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.transparent),
+                            padding:
+                                MaterialStateProperty.all(EdgeInsets.all(20.0)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
+            ),
           ),
           if (errorMessage.isNotEmpty)
             Padding(
@@ -159,7 +170,16 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                     width: double.infinity,
                     child: TextButton(
                       onPressed: () {
-                        // _logout();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AmountScreen(
+                              recipientName: recipientName,
+                              recipientCardNumber: recipientCardNumber,
+                              recipientUsername: recipientUsername,
+                            ),
+                          ),
+                        );
                       },
                       style: ButtonStyle(
                         shape:
@@ -213,7 +233,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color(0xFF9067C6),
             fontSize: 16,
             // fontWeight: FontWeight.bold,
@@ -221,7 +241,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
         ),
         Text(
           data,
-          style: TextStyle(
+          style: const TextStyle(
             color: Color.fromARGB(255, 255, 255, 255),
             fontSize: 24,
             fontWeight: FontWeight.bold,
