@@ -299,12 +299,12 @@ class _LoginPageState extends State<LoginPage> {
       if (response.statusCode == 200) {
         // Successful login, save username
 
-// Save loggedInUser to SharedPreferences
+        // Save loggedInUser to SharedPreferences
         loggedInUser = username;
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('loggedInUser', loggedInUser!);
 
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomeScreen(

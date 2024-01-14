@@ -1,5 +1,6 @@
 // profile.dart
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print
+import 'package:evilbank_mobile/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -16,12 +17,15 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 3;
   late String loggedInUser = '';
   Map<String, dynamic> userData = {};
-  Set<String> selectedUserData =
-      {}; // Use a Set to keep track of selected buttons
 
   @override
   void initState() {
     super.initState();
+    userData['name'] = '';
+    userData['hiddenPassword'] = '';
+    userData['birthday'] = '';
+    userData['address'] = '';
+    userData['username'] = '';
     _loadLoggedInUser();
   }
 
@@ -46,6 +50,12 @@ class _ProfilePageState extends State<ProfilePage> {
       final Map<String, dynamic> data = json.decode(response.body);
       setState(() {
         userData = data;
+        userData["name"] = userData['firstName'] + " " + userData['lastName'];
+        String stars = "*";
+
+        String starsString =
+            userData['password'].replaceAll(RegExp(r"."), stars).toString();
+        userData["hiddenPassword"] = starsString;
       });
     } else {
       print('Failed to fetch user data. Status code: ${response.statusCode}');
@@ -70,7 +80,6 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Row(
                 children: const [
-                  // _buildHeaderText(loggedInUser),
                   Text(
                     'Your Profile',
                     style: TextStyle(
@@ -86,25 +95,15 @@ class _ProfilePageState extends State<ProfilePage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 18),
-                  // Text(
-                  //   'My Personal Info',
-                  //   style: TextStyle(
-                  //     color: Color(0xFF9067C6),
-                  //     fontSize: 24,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  SizedBox(height: 18),
-                  _buildDataField("Name",
-                      userData['firstName'] + " " + userData['lastName']),
+                  SizedBox(height: 36),
+                  _buildDataField("Name", userData['name']),
                   SizedBox(height: 18),
                   _buildDataField('BirthDate', userData['birthday']),
                   SizedBox(height: 18),
                   _buildDataField('Address', userData['address']),
-                  SizedBox(height: 18),
+                  SizedBox(height: 52),
                   Text(
-                    'My Bank Info',
+                    'Login Credentials',
                     style: TextStyle(
                       color: Color(0xFF9067C6),
                       fontSize: 24,
@@ -112,11 +111,73 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   SizedBox(height: 18),
-                  _buildDataButton('Card Number', userData['creditCardNumber']),
+                  _buildDataField('Username', userData['username']),
                   SizedBox(height: 18),
-                  _buildDataButton('Expire Date', userData['expiryDate']),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Password",
+                        style: TextStyle(
+                          color: Color(0xFF9067C6),
+                          fontSize: 16,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            userData['hiddenPassword'],
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Icon(
+                            Icons.visibility,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 32.0,
+                      ),
+                      SizedBox(
+                        height: 50.0,
+                        width: double.infinity,
+                        child: TextButton(
+                          onPressed: () {
+                            _logout();
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.red),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.transparent),
+                          ),
+                          child: Text(
+                            'Log out',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // _buildPasswordField('Password', userData['hiddenPassword']),
                   SizedBox(height: 18),
-                  _buildDataButton('Cvv', userData['cvv']),
                 ],
               ),
             ],
@@ -130,31 +191,6 @@ class _ProfilePageState extends State<ProfilePage> {
             });
           },
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderText(String username) {
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: '$username ',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF9067C6),
-            ),
-          ),
-          TextSpan(
-            text: 'Profile !',
-            style: TextStyle(
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -184,57 +220,15 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildDataButton(String label, String? data) {
-    return AnimatedSwitcher(
-      duration: Duration(milliseconds: 500),
-      child: selectedUserData.contains(label)
-          ? GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedUserData.remove(label);
-                });
-              },
-              child: Container(
-                key: ValueKey<String>('revealed_data_$label'),
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF9067C6), // Change background color
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '$label: $data',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            )
-          : ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  selectedUserData.add(label);
-                });
-              },
-              child: Text('My $label'),
-            ),
-    );
-  }
-}
+  void _logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('loggedInUser');
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.soraTextTheme(
-          Theme.of(context).textTheme,
-        ),
-      ),
-      home: ProfilePage(),
+    // Navigate to the login page
+    // ignore: use_build_context_synchronously
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
 }

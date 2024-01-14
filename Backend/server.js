@@ -6,6 +6,7 @@ const cors = require("cors");
 const readline = require("readline");
 const User = require("./User");
 const Transaction = require("./Transaction");
+const formatCreditCardNumber = require("./utils");
 
 const app = express();
 const port = 3000;
@@ -126,12 +127,39 @@ app.get("/users/:username", async (req, res) => {
 
 		const formattedUser = {
 			_id: user._id,
-			firstName: user.lastName,
+			firstName: user.firstName,
 			lastName: user.lastName,
 			address: user.address,
 			birthday: user.birthday.toLocaleDateString(),
 			username: user.username,
 			password: user.password,
+			creditCardNumber: user.creditCardNumber,
+			__v: user.__v,
+		};
+
+		res.send(formattedUser);
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Server error");
+	}
+});
+
+app.get("/cardholders/:cardNumber", async (req, res) => {
+	console.log("GET: Cardholders");
+	const { cardNumber } = req.params;
+	try {
+		const user = await User.findOne({ creditCardNumber: cardNumber });
+		if (!user) {
+			return res.status(404).send({ msg: "Cardholder not found" });
+		}
+
+		const formattedUser = {
+			_id: user._id,
+			name: user.firstName + " " + user.lastName,
+			address: user.address,
+			birthday: user.birthday.toLocaleDateString(),
+			username: user.username,
+			creditCardNumber: formatCreditCardNumber(user.creditCardNumber),
 			__v: user.__v,
 		};
 
@@ -346,7 +374,6 @@ app.get("/transactions/latest/:username", async (req, res) => {
 				});
 			}
 		});
-		console.log(formattedTransactions);
 		res.status(200).json(formattedTransactions);
 	} catch (err) {
 		res.status(500).json({
