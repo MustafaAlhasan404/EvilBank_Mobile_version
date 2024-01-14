@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_import, unused_import
+
 import 'package:evilbank_mobile/home.dart';
 import 'package:evilbank_mobile/login.dart';
 import 'package:flutter/material.dart';

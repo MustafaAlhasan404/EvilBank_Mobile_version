@@ -16,6 +16,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 3;
   late String loggedInUser = '';
+  bool _obscureText = true; // Added
   Map<String, dynamic> userData = {};
 
   @override
@@ -132,16 +133,27 @@ class _ProfilePageState extends State<ProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            userData['hiddenPassword'],
+                            _obscureText
+                                ? userData['hiddenPassword']
+                                : userData['password'],
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Icon(
-                            Icons.visibility,
-                            color: Colors.white,
+                          IconButton(
+                            icon: Icon(
+                              _obscureText
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscureText = !_obscureText;
+                              });
+                            },
                           ),
                         ],
                       ),

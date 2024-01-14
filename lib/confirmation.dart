@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, unused_element, unused_import
+
 import 'dart:ffi';
 
 import 'package:evilbank_mobile/amount.dart';
