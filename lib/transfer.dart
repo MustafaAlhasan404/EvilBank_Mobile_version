@@ -41,10 +41,27 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
         errorMessage = '';
       });
     } else if (response.statusCode == 404) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        errorMessage = data["msg"];
-      });
+      // Not found by card number
+
+      final response =
+          await http.get(Uri.parse('$url/users/${_cardNumberController.text}'));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          recipientName = data['name'];
+          recipientAddress = data['address'];
+          recipientCardNumber = data['creditCardNumber'];
+          recipientUsername = data['username'];
+          errorMessage = '';
+        });
+      } else if (response.statusCode == 404) {
+        // fail 2nd time
+        final data = jsonDecode(response.body);
+        setState(() {
+          errorMessage = data["msg"];
+        });
+      }
     }
   }
 
@@ -85,7 +102,7 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
                       children: [
                         Expanded(
                           child: _buildInputField(
-                              'Recipient Card Number', _cardNumberController),
+                              'Card Number / Username', _cardNumberController),
                         ),
                         const SizedBox(
                           width: 8.0,
@@ -267,10 +284,10 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly
-        ],
+        // keyboardType: TextInputType.number,
+        // inputFormatters: <TextInputFormatter>[
+        //   FilteringTextInputFormatter.digitsOnly
+        // ],
         decoration: InputDecoration(
           labelText: label,
           labelStyle: GoogleFonts.sora(
