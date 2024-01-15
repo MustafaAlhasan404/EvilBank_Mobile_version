@@ -134,7 +134,7 @@ app.get("/users/:username", async (req, res) => {
 			birthday: user.birthday.toLocaleDateString(),
 			username: user.username,
 			password: user.password,
-			creditCardNumber: user.creditCardNumber,
+			creditCardNumber: formatCreditCardNumber(user.creditCardNumber),
 			__v: user.__v,
 		};
 
