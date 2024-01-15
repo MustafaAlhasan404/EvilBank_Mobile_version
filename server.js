@@ -129,6 +129,7 @@ app.get("/users/:username", async (req, res) => {
 			_id: user._id,
 			firstName: user.firstName,
 			lastName: user.lastName,
+			name: `${user.firstName} ${user.lastName}`,
 			address: user.address,
 			birthday: user.birthday.toLocaleDateString(),
 			username: user.username,
