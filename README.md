@@ -2,6 +2,8 @@
 
 This is a mobile banking app built with Flutter that allows users to manage their bank account, transfer funds and more.
 
+# Note you only need to run 'flutter build apk --release' and install the apk on your phone . 
+
 # Overview
 The app has the following features:
 
