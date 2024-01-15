@@ -209,6 +209,7 @@ app.get("/getCreditCardInfo/:username", async (req, res) => {
 		yearStr = user.expiryDate.getFullYear().toString();
 		const formattedExpiry =
 			user.expiryDate.getMonth() +
+			1 +
 			"/" +
 			yearStr.charAt(2) +
 			yearStr.charAt(3);
