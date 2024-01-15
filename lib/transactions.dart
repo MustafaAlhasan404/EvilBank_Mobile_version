@@ -1,3 +1,4 @@
+import 'url.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
@@ -27,7 +28,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   Future<void> fetchTransactions() async {
-    final String url = 'http://10.0.2.2:3000/transactions/${loggedInUser}';
+    final String finalUrl = '$url/transactions/$loggedInUser';
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? user = prefs.getString('loggedInUser');
@@ -37,7 +38,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       });
 
       try {
-        final response = await http.get(Uri.parse(url));
+        final response = await http.get(Uri.parse(finalUrl));
 
         if (response.statusCode == 200) {
           final List<dynamic> transactionData = jsonDecode(response.body);

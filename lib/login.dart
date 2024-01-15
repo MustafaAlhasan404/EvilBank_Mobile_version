@@ -1,4 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, prefer_const_declarations, use_build_context_synchronously, sort_child_properties_last, avoid_print, depend_on_referenced_packages, deprecated_member_use
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'signup.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'url.dart';
 
 String? loggedInUser;
 
@@ -278,11 +280,11 @@ class _LoginPageState extends State<LoginPage> {
     final String password = _passwordController.text;
 
     // Assuming you have an API endpoint for login
-    final String loginEndpoint = 'http://10.0.2.2:3000/login';
+    final String finalUrl = '$url/login';
 
     try {
       final response = await http.post(
-        Uri.parse(loginEndpoint),
+        Uri.parse(finalUrl),
         headers: {
           'Content-Type':
               'application/json', // Add this line to specify JSON content type

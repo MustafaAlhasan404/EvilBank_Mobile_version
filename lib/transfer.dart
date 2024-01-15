@@ -1,4 +1,5 @@
 import 'package:evilbank_mobile/amount.dart';
+import 'package:evilbank_mobile/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -27,8 +28,8 @@ class _TransferOperationScreenState extends State<TransferOperationScreen> {
   late String loggedInUser = '';
 
   Future<void> _getRecipientDetails() async {
-    final response = await http.get(Uri.parse(
-        'http://10.0.2.2:3000/cardholders/${_cardNumberController.text}'));
+    final response = await http
+        .get(Uri.parse('$url/cardholders/${_cardNumberController.text}'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

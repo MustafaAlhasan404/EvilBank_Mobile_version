@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'login.dart';
+import 'url.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -366,11 +367,11 @@ class _SignupPageState extends State<SignupPage> {
       return;
     }
 
-    final String serverUrl = 'http://10.0.2.2:3000/signup';
+    final String finalUrl = '$url/signup';
 
     try {
       final response = await http.post(
-        Uri.parse(serverUrl),
+        Uri.parse(finalUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'username': username,

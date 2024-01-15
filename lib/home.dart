@@ -2,6 +2,7 @@
 
 import 'package:google_fonts/google_fonts.dart';
 
+import 'url.dart';
 import 'login.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_card/awesome_card.dart';
@@ -44,11 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchTransactions() async {
-    final String url =
-        'http://10.0.2.2:3000/transactions/latest/${loggedInUser}';
+    final String finalUrl = '${url}/transactions/latest/${loggedInUser}';
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(finalUrl));
 
       if (response.statusCode == 200) {
         final List<dynamic> transactionData = jsonDecode(response.body);
@@ -68,11 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchCreditCardInfo() async {
-    final String url =
-        'http://10.0.2.2:3000/getCreditCardInfo/${widget.username}';
+    final String finalUrl = '${url}/getCreditCardInfo/${widget.username}';
 
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(finalUrl));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> creditCardInfo = jsonDecode(response.body);
