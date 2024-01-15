@@ -1,5 +1,6 @@
 // profile.dart
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print
+import 'url.dart';
 import 'package:evilbank_mobile/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,8 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> fetchUserData(String username) async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:3000/users/$username'));
+    final response = await http.get(Uri.parse('$url/users/$username'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);

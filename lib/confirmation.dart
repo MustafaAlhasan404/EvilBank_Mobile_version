@@ -2,6 +2,7 @@
 
 import 'dart:ffi';
 
+import 'url.dart';
 import 'package:evilbank_mobile/amount.dart';
 import 'package:evilbank_mobile/failure.dart';
 import 'package:evilbank_mobile/login.dart';
@@ -72,7 +73,7 @@ class ConfirmationScreen extends StatelessWidget {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () async {
-                      var url = Uri.parse('http://10.0.2.2:3000/transfer');
+                      var finalUrl = Uri.parse('$url/transfer');
                       var headers = {'Content-Type': 'application/json'};
                       var body = jsonEncode({
                         'senderUsername': loggedInUser,
@@ -80,8 +81,8 @@ class ConfirmationScreen extends StatelessWidget {
                         'amount': int.parse(amount),
                       });
 
-                      var response =
-                          await http.post(url, headers: headers, body: body);
+                      var response = await http.post(finalUrl,
+                          headers: headers, body: body);
 
                       if (response.statusCode == 200) {
                         // Transfer successful

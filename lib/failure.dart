@@ -53,7 +53,7 @@ class FailureScreen extends StatelessWidget {
                           size: 150.0,
                         ),
                         Text(
-                          "Failed to Send",
+                          "Transfer failed",
                           style: TextStyle(
                             color: Color.fromARGB(255, 255, 255, 255),
                             fontSize: 24,

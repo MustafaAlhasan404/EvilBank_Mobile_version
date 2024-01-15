@@ -9,7 +9,7 @@ const Transaction = require("./Transaction");
 const formatCreditCardNumber = require("./utils");
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT | 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -383,6 +383,6 @@ app.get("/transactions/latest/:username", async (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
-	console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+	console.log(`Server is running on PORT ${PORT}`);
 });
