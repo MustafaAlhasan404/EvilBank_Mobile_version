@@ -312,18 +312,20 @@ app.get("/transactions/:username", async (req, res) => {
 					title: "Outgoing",
 					name: t.receiverName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			} else {
 				formattedTransactions.push({
 					title: "Incoming",
 					name: t.senderName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			}
 		});
@@ -359,18 +361,20 @@ app.get("/transactions/latest/:username", async (req, res) => {
 					title: "Outgoing",
 					name: t.receiverName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			} else {
 				formattedTransactions.push({
 					title: "Incoming",
 					name: t.senderName,
 					amount: t.amount.toLocaleString(),
-					date: `${t.date.getFullYear()}/${
-						t.date.getMonth() + 1
-					}/${t.date.getDay()}`,
+					// date: `${t.date.getFullYear()}/${
+					// 	t.date.getMonth() + 1
+					// }/${t.date.getDay()}`,
+					date: t.date.toLocaleDateString(),
 				});
 			}
 		});
